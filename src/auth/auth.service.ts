@@ -20,7 +20,10 @@ export class AuthService {
     );
     if (!!userRegistered) {
       throw new HttpException(
-        'User already exists',
+        {
+          success: false,
+          message: 'User already exists',
+        },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
@@ -50,7 +53,7 @@ export class AuthService {
       );
     }
 
-    const payload = { username: user.email, roles: user.roles };
+    const payload = { email: user.email, roles: user.roles };
     const jwtSecret = this.configService.get('JWT_SECRET');
     const authToken = this.jwtService.sign(payload, { secret: jwtSecret });
     return {
