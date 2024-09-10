@@ -20,8 +20,6 @@ export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('staff')
   getAllProducts() {
     return this.productService.findAll();
   }
