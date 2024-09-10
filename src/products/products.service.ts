@@ -13,6 +13,20 @@ export class ProductsService {
     return this.productModel.find().exec();
   }
 
+  async findOne(id: string): Promise<Product> {
+    const product = await this.productModel.findById(id).exec();
+    if (!product) {
+      throw new HttpException(
+        {
+          success: false,
+          message: `Product with ID ${id} not found`,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return product;
+  }
+
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const newProduct = new this.productModel(createProductDto);
     return newProduct.save();

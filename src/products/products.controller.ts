@@ -26,6 +26,11 @@ export class ProductsController {
     return this.productService.findAll();
   }
 
+  @Get(':id')
+  getAllProduct(@Param('id') id: string) {
+    return this.productService.findOne(id);
+  }
+
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('staff')
