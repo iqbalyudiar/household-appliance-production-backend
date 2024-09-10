@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   UseGuards,
   Body,
   Param,
@@ -37,5 +38,12 @@ export class ProductsController {
   @Roles('staff')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('staff')
+  delete(@Param('id') id: string) {
+    return this.productService.delete(id);
   }
 }

@@ -36,4 +36,22 @@ export class ProductsService {
     }
     return updatedProduct;
   }
+
+  async delete(id: string) {
+    const result = await this.productModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new HttpException(
+        {
+          success: false,
+          message: `Product with ID ${id} not found`,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      success: true,
+      message: `Product with ID ${id} successfully deleted`,
+    };
+  }
 }
