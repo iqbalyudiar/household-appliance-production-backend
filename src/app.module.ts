@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CommonModule } from './common/common.module';
+import { WarrantyModule } from './warranty/warranty.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CommonModule } from './common/common.module';
     AuthModule,
     ProductsModule,
     CommonModule,
+    WarrantyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
