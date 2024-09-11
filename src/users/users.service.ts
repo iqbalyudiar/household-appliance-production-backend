@@ -26,23 +26,17 @@ export class UsersService {
     return user;
   }
 
-  async getMyProfile(auth: string) {
-    const token = auth ? auth.replace('Bearer ', '') : null;
-
-    if (!token) {
+  async getMyProfile(email: string) {
+    const user = await this.userModel.findOne({ email }).exec();
+    if (!user) {
       throw new HttpException(
         {
           success: false,
-          message: 'Unauthorized user',
+          message: 'User Not Found',
         },
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.NOT_FOUND,
       );
     }
-
-    const tokenDecode = this.jwtService.decode(token);
-    const user = await this.userModel
-      .findOne({ email: tokenDecode.email })
-      .exec();
     const result = {
       success: true,
       id: user._id,
