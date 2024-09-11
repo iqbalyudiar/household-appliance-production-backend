@@ -15,7 +15,7 @@ export class WarrantyService {
     createDto: CreateWarrantyClaimDto,
   ): Promise<Warranty> {
     const newClaim = new this.warrantyModel({
-      ...createDto,
+      product: createDto.productId,
       user: userId,
       issueDate: new Date(),
       expiryDate: new Date(
@@ -25,5 +25,22 @@ export class WarrantyService {
       status: 'pending',
     });
     return newClaim.save();
+  }
+
+  async findClaimsByUser(userId: string): Promise<Warranty[]> {
+    const warranty = await this.warrantyModel
+      .find({ user: userId })
+      .populate('product', 'name description price')
+      .populate('user', 'name email')
+      .exec();
+    return warranty;
+  }
+
+  async findAllClaims(): Promise<Warranty[]> {
+    const warranties = await this.warrantyModel
+      .find()
+      .populate('product', 'name description price')
+      .populate('user', 'name email');
+    return warranties;
   }
 }
