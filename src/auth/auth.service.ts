@@ -53,7 +53,7 @@ export class AuthService {
       );
     }
 
-    const payload = { email: user.email, roles: user.roles };
+    const payload = { email: user.email, roles: user.roles, id: user.id };
     const jwtSecret = this.configService.get('JWT_SECRET');
     const authToken = this.jwtService.sign(payload, { secret: jwtSecret });
     return {
