@@ -5,9 +5,11 @@ import {
   Request,
   Body,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { WarrantyService } from './warranty.service';
 import { CreateWarrantyClaimDto } from './dto/create-warranty-claim.dto';
+import { UpdateWarrantyClaimDto } from './dto/update-warranty-claim.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -32,5 +34,15 @@ export class WarrantyController {
   @Roles('staff')
   findAllClaims() {
     return this.warrantyService.findAllClaims();
+  }
+
+  @Post('claims/:id/status')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('staff')
+  updateClaimStatus(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateWarrantyClaimDto,
+  ) {
+    return this.warrantyService.updateClaimStatus(id, updateDto);
   }
 }

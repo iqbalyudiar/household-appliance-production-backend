@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Warranty } from './schema/warranty.schema';
@@ -42,5 +42,26 @@ export class WarrantyService {
       .populate('product', 'name description price')
       .populate('user', 'name email');
     return warranties;
+  }
+
+  async updateClaimStatus(
+    claimId: string,
+    updateDto: UpdateWarrantyClaimDto,
+  ): Promise<Warranty> {
+    const claim = await this.warrantyModel.findByIdAndUpdate(
+      claimId,
+      { status: updateDto.status },
+      { new: true },
+    );
+    if (!claim) {
+      throw new HttpException(
+        {
+          success: false,
+          message: `Warranty claim with ID ${claimId} not found`,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return claim;
   }
 }
