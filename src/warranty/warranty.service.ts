@@ -10,10 +10,7 @@ export class WarrantyService {
     @InjectModel(Warranty.name) private warrantyModel: Model<Warranty>,
   ) {}
 
-  async createClaim(
-    userId: string,
-    createDto: CreateWarrantyClaimDto,
-  ): Promise<Warranty> {
+  async createClaim(userId: string, createDto: CreateWarrantyClaimDto) {
     const newClaim = new this.warrantyModel({
       product: createDto.productId,
       user: userId,
@@ -24,30 +21,47 @@ export class WarrantyService {
       isClaimed: true,
       status: 'pending',
     });
-    return newClaim.save();
+
+    const claim = await newClaim.save();
+    return {
+      success: true,
+      _id: claim._id,
+      product: claim.product,
+      user: claim.user,
+      issueDate: claim.issueDate,
+      expiryDate: claim.expiryDate,
+      isClaimed: claim.isClaimed,
+      status: claim.status,
+      message: 'Successfully create a claim',
+    };
   }
 
-  async findClaimsByUser(userId: string): Promise<Warranty[]> {
+  async findClaimsByUser(userId: string) {
     const warranty = await this.warrantyModel
       .find({ user: userId })
       .populate('product', 'name description price')
       .populate('user', 'name email')
       .exec();
-    return warranty;
+    return {
+      success: true,
+      claims: warranty,
+    };
   }
 
-  async findAllClaims(): Promise<Warranty[]> {
+  async findAllClaims() {
     const warranties = await this.warrantyModel
       .find()
       .populate('product', 'name description price')
       .populate('user', 'name email');
-    return warranties;
+    const total = await this.warrantyModel.countDocuments().exec();
+    return {
+      success: true,
+      claims: warranties,
+      total,
+    };
   }
 
-  async updateClaimStatus(
-    claimId: string,
-    updateDto: UpdateWarrantyClaimDto,
-  ): Promise<Warranty> {
+  async updateClaimStatus(claimId: string, updateDto: UpdateWarrantyClaimDto) {
     const claim = await this.warrantyModel.findByIdAndUpdate(
       claimId,
       { status: updateDto.status },
@@ -62,6 +76,9 @@ export class WarrantyService {
         HttpStatus.NOT_FOUND,
       );
     }
-    return claim;
+    return {
+      success: true,
+      message: `Successfully update status claim with ID  ${claimId} to ${updateDto.status}`,
+    };
   }
 }
