@@ -1,7 +1,16 @@
-import { Controller, Post, Request, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Request,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { WarrantyService } from './warranty.service';
 import { CreateWarrantyClaimDto } from './dto/create-warranty-claim.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 @Controller('warranty')
 export class WarrantyController {
   constructor(private warrantyService: WarrantyService) {}
@@ -10,5 +19,18 @@ export class WarrantyController {
   @UseGuards(AuthGuard('jwt'))
   createClaim(@Body() createDto: CreateWarrantyClaimDto, @Request() req) {
     return this.warrantyService.createClaim(req.user.id, createDto);
+  }
+
+  @Get('claims/me')
+  @UseGuards(AuthGuard('jwt'))
+  findMyClaims(@Request() req) {
+    return this.warrantyService.findClaimsByUser(req.user.id);
+  }
+
+  @Get('claims/all')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('staff')
+  findAllClaims() {
+    return this.warrantyService.findAllClaims();
   }
 }
