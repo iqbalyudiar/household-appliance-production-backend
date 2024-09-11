@@ -1,8 +1,8 @@
-import { Document, ObjectId } from 'mongoose';
+import { ObjectId } from 'mongoose';
 import { Product } from '../schemas/product.schema';
 
-export interface IProduct extends Document {
-  id: ObjectId;
+export interface IProduct {
+  id: ObjectId | string | unknown ;
   name: string;
   description: string;
   price: number;
@@ -26,7 +26,7 @@ export interface ID {
   id: ObjectId | string | unknown;
 }
 
-export type IProductResponse = ISuccess & ID & Product;
+export type IProductResponse = ISuccess & IProduct;
 
 export type IProductCreateResponse = IProductResponse & IMessage;
 
