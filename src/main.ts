@@ -18,6 +18,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    methods: 'GET,POST,PUT,DELETE',
+    credentials: true,
+  });
+
   const configService = app.get(ConfigService);
   const port = configService.get('PORT') || 3000;
   await app.listen(port);
